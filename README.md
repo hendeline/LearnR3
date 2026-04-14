@@ -1,3 +1,21 @@
+#Gør følgende som beskrevet i pre-course-opgave:
+usethis::use_r("functions", open = FALSE)
+
+#Laver to nye filer (Quarto)
+r3::create_learning_qmd()
+r3::create_cleaning_qmd()
+
+#Token git:
+usethis::gh_token_help()
+#Ser at jeg har en token i github. Kan ellers lave ny token med: gitcreds::gitcreds_set()
+
+#Ignore the auto-generated Quarto files:
+usethis::use_git_ignore(c("*.html", "*_files"))
+
+#Har commited ændringer til Git med "Setting up the project"
+#Skal nu connecte til Github:
+usethis::use_github()
+
 TODO: Add more to the title of your project here
 
 # LearnR3:
