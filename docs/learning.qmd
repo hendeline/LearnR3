@@ -8,13 +8,16 @@ For at åbne palette: "cmd + shift + p"
 Indsæt pipe: "cmd + shift + m"
 Code chunk: "cmd + option + i"
 {} : "option+shift+("
+"eval:false" gør, at den ikke kører den kode-chunk, den står i
+"::" er en måde at sige, at fra denne pakke - brug denne funktion.
 
 ## Setup
-
+Snakecase-linjen herunder kan i princippet slettes, da den er skrevet ind i min funktion i "function.R", men jeg lader den lige stå. 
 ```{r setup}
 library(tidyverse)
 library(here)
 library(snakecase)
+source(here("R/functions.R"))
 ```
 
 ## Importing new data
@@ -98,6 +101,8 @@ Making the functions more generic.
 Check if a function-name is already taken: Skriv "?read", hvis man vil tjekke, om en funktion allerede hedder "read", så man ikke overskriver en anden funktion.
 Ved at skrive "max_rows = 100" i function --> betyder at hvis jeg ikke specificerer antallet af rows, så henter den default 100 rækker.
 ```{r}
+#| eval: false
+#| include: false
 #' Title: Read in one nurses' stress data file
 #'
 #' @param file_path A path to a data file
@@ -114,6 +119,7 @@ read <- function(file_path, max_rows = 100) {
   base::return(data)
 }
 ```
+JEG HAR CUTTET KODEN HEROVER OVER I "function.R". DEREFTER GJORT SÅDAN AT KODEN HEROVER IKKE KØRER MERE, FORDI DEN ELLERS VIL GIVE PROBLEMER SENERE, NÅR JEG ARBEJDER VIDERE MED DEN ANDEN.
 
 Tester at ovenstående function virker ved at hente noget data:
 
@@ -171,3 +177,13 @@ Disse funktioner kommer fra "base"-pakke, som altid bruges, så denne behøver m
 Kommer fra snakecase-pakke. Denne tilføjes:
 
 usethis::use_package("snakecase")
+
+
+
+
+
+
+
+
+
+
