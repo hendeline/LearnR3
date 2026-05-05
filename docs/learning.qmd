@@ -62,7 +62,6 @@ here("data-raw/nurses-stress/stress/6B/6B_1587569373/EDA.csv.gz") |>
   )
 ```
 
-
 Med n_max:
 ```{r}
 here("data-raw/nurses-stress/stress/6B/6B_1587569373/EDA.csv.gz") |>
@@ -71,4 +70,24 @@ here("data-raw/nurses-stress/stress/6B/6B_1587569373/EDA.csv.gz") |>
     name_repair = to_snake_case,
     n_max = 100
   )
+```
+
+
+## Bundling code into function
+Før lærte vi at indlæse ét datasæt. Hvis man skal indlæse mange sæt, skal man ikke skrive den samme kode 100 gange - vi lærer hvordan man gør det nemmere nu. Bruger funktioner til dette formål.
+Indsætter {} med "option+shift+("
+Roxygen creates documentation for the new function. Når man laver roxygen skal man udfylde forskellige ting, som beskriver funktionen.
+
+```{r}
+#' Title: Add two numbers together
+#'
+#' @param num1 A number here
+#' @param num2 A number here
+#'
+#' @returns Returns the sum of two numbers
+#'
+add_numbers <- function(num1, num2) {
+  added <- num1 + num2
+  return(added)
+}
 ```
