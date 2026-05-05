@@ -7,7 +7,7 @@ r3::create_cleaning_qmd()
 
 #Token git:
 usethis::gh_token_help()
-#Ser at jeg har en token i github. Kan ellers lave ny token med: gitcreds::gitcreds_set()
+#Ser at jeg har en token i github. Kan ellers opdatere (når jeg får ny, når den tidligere udløber)med: gitcreds::gitcreds_set()
 
 #Ignore the auto-generated Quarto files:
 usethis::use_git_ignore(c("*.html", "*_files"))

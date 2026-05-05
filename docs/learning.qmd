@@ -30,3 +30,45 @@ here("data-raw/nurses-stress/stress/5C/5C_1586886626/HR.csv.gz") %>%
     n_max = 100
   )
 ```
+
+## Exersice: Reading other files
+
+Øvelse 15.6 
+Følger instruktioner på hjemmeside. Skal indlæse datasæt hhv med og uden "n_max"-funktion:
+```{r}
+here("data-raw/nurses-stress/stress/5C/5C_1586886712/HR.csv.gz") |>
+  read_csv(
+    show_col_types = FALSE,
+    name_repair = to_snake_case
+  )
+```
+```{r}
+here("data-raw/nurses-stress/stress/5C/5C_1586886712/HR.csv.gz") |>
+  read_csv(
+    show_col_types = FALSE,
+    name_repair = to_snake_case,
+    n_max = 100
+  )
+```
+
+Skal gøre det samme for en anden deltager (6b) med og uden n_max:
+
+Uden n_max:
+```{r}
+here("data-raw/nurses-stress/stress/6B/6B_1587569373/EDA.csv.gz") |>
+  read_csv(
+    show_col_types = FALSE,
+    name_repair = to_snake_case
+  )
+```
+
+
+Med n_max:
+```{r}
+here("data-raw/nurses-stress/stress/6B/6B_1587569373/EDA.csv.gz") |>
+  read_csv(
+    show_col_types = FALSE,
+    name_repair = to_snake_case,
+    n_max = 100
+  )
+```
