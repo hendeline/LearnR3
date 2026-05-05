@@ -7,6 +7,7 @@ format: html
 For at åbne palette: "cmd + shift + p"
 Indsæt pipe: "cmd + shift + m"
 Code chunk: "cmd + option + i"
+{} : "option+shift+("
 
 ## Setup
 
@@ -73,7 +74,7 @@ here("data-raw/nurses-stress/stress/6B/6B_1587569373/EDA.csv.gz") |>
 ```
 
 
-## Bundling code into function
+## Creating a function
 Før lærte vi at indlæse ét datasæt. Hvis man skal indlæse mange sæt, skal man ikke skrive den samme kode 100 gange - vi lærer hvordan man gør det nemmere nu. Bruger funktioner til dette formål.
 Indsætter {} med "option+shift+("
 Roxygen creates documentation for the new function. Når man laver roxygen skal man udfylde forskellige ting, som beskriver funktionen.
@@ -90,4 +91,35 @@ add_numbers <- function(num1, num2) {
   added <- num1 + num2
   return(added)
 }
+```
+
+## Making a function for importing our data
+Making the functions more generic. 
+Check if a function-name is already taken: Skriv "?read", hvis man vil tjekke, om en funktion allerede hedder "read", så man ikke overskriver en anden funktion.
+```{r}
+#' Title: Read in one nurses' stress data file
+#'
+#' @param file_path A path to a data file
+#'
+#' @returns Outputs a data frame/tibble
+read <- function(file_path) {
+  data <- file_path |>
+    read_csv(
+      show_col_types = FALSE,
+      name_repair = to_snake_case,
+      n_max = 100
+    )
+  return(data)
+}
+```
+
+Tester at ovenstående function virker ved at hente noget data:
+
+```{r}
+here("data-raw/nurses-stress/stress/5C/5C_1586886626/HR.csv.gz") %>%
+  read()
+```
+```{r}
+here("data-raw/nurses-stress/stress/5C/5C_1586886712/HR.csv.gz") %>%
+  read()
 ```
