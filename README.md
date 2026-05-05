@@ -16,6 +16,12 @@ usethis::use_git_ignore(c("*.html", "*_files"))
 #Skal nu connecte til Github:
 usethis::use_github()
 
+#Henter datasæt:
+usethis::use_data_raw("nurses-stress")
+
+
+
+
 TODO: Add more to the title of your project here
 
 # LearnR3:

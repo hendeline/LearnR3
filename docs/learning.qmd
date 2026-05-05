@@ -1,15 +1,32 @@
 ---
 title: "Draft Quarto document"
-author: "Your Name"
+author: "Line Hansen"
 format: html
 ---
 
-## Header 1
+For at åbne palette: "cmd + shift + p"
+Indsæt pipe: "cmd + shift + m"
+Code chunk: "cmd + option + i"
+
+## Setup
 
 ```{r setup}
-#| include: false
+library(tidyverse)
+library(here)
+library(snakecase)
 ```
 
+## Importing new data
+Ved at skrive "read_csv(show_col_types = FALSE)" og indsætte denne tekst i parentesen vises forudindtagede antagelser/informationer om datasættet ikke. 
+
+For readability:
+"Snakecase" er nemmest at læse - består kun af små bogstaver, hvor mellemrum er "_". Hvis man skriver "?read_csv" i console kan man se beskrivelse af "read_csv"-funktionen. Find "name_repair" og ser at der står "unique", men ikke "snakecase". Skriver derfor "library(snakecase)" i min "r setup"-chunk og "name_repair = to_snake_case" i koden herunder, og formatet bliver dermed snakecase. 
+Man kan begrænse antallet af cases ved at skrive "n_max = 100" - den indlæser der kun 100 cases. Dette datasæt indeholder kun 37 kolonner, så det ændrer ikke noget.
 ```{r}
-# Code chunk
+here("data-raw/nurses-stress/stress/5C/5C_1586886626/HR.csv.gz") %>%
+  read_csv(
+    show_col_types = FALSE,
+    name_repair = to_snake_case,
+    n_max = 100
+  )
 ```
