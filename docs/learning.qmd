@@ -96,6 +96,7 @@ add_numbers <- function(num1, num2) {
 ## Making a function for importing our data
 Making the functions more generic. 
 Check if a function-name is already taken: Skriv "?read", hvis man vil tjekke, om en funktion allerede hedder "read", så man ikke overskriver en anden funktion.
+Ved at skrive "max_rows = 100" i function --> betyder at hvis jeg ikke specificerer antallet af rows, så henter den default 100 rækker.
 ```{r}
 #' Title: Read in one nurses' stress data file
 #'
@@ -105,12 +106,12 @@ Check if a function-name is already taken: Skriv "?read", hvis man vil tjekke, o
 #' @returns Outputs a data frame/tibble
 read <- function(file_path, max_rows = 100) {
   data <- file_path |>
-    read_csv(
+    readr::read_csv(
       show_col_types = FALSE,
-      name_repair = to_snake_case,
+      name_repair = snakecase::to_snake_case,
       n_max = max_rows
     )
-  return(data)
+  base::return(data)
 }
 ```
 
@@ -142,3 +143,31 @@ here("data-raw/nurses-stress/stress/5C/5C_1586886712/HR.csv.gz") |>
 here("data-raw/nurses-stress/stress/5C/5C_1586886712/HR.csv.gz") |>
   read(max_rows = Inf)
 ```
+
+## Laver DESCRIPTION - gælder for hele projektet og ikke kun for dette qmd-dokument!
+Kan åbnes ved "ctrl + ." Skriv DESCRIPTION og åbn det. Man kan tilføje pakker osv, som så gælder for alle dokumenter i dette projekt. 
+
+Tilføjer pakker til projekt: 
+
+usethis::use_package("here")
+usethis::use_package("tidyverse","depends")
+
+"::" er en måde at sige, at fra denne pakke - brug denne funktion.
+Hvis man vil finde ud af, hvilken pakke en funktion kommer fra, skriv "?read_csv"
+
+?read_csv
+Kommer fra "read_delim {readr}"
+
+## Exercise 17.5
+Tilføjer readr i DESCRIPTION
+
+usethis::use_package("readr")
+
+?function
+?return
+Disse funktioner kommer fra "base"-pakke, som altid bruges, så denne behøver man ikke indlæse.
+
+?to_snake_case
+Kommer fra snakecase-pakke. Denne tilføjes:
+
+usethis::use_package("snakecase")
