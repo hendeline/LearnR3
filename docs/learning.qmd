@@ -10,6 +10,7 @@ Code chunk: "cmd + option + i"
 {} : "option+shift+("
 "eval:false" gør, at den ikke kører den kode-chunk, den står i
 "::" er en måde at sige, at fra denne pakke - brug denne funktion.
+Indsæt "\" : "option + shift + 7"
 
 ## Setup
 Snakecase-linjen herunder kan i princippet slettes, da den er skrevet ind i min funktion i "function.R", men jeg lader den lige stå. 
@@ -339,4 +340,70 @@ hr_data |>
 # Or with one of the other datasets:
 read_all("BVP.csv.gz") |>
   get_participant_id()
+```
+
+## 20 Using split-apply-combine to help in processing - working with across
+Vi skal kombinere spørgeskemadata med HR-data på et tidspunkt.
+
+Finder dokumentation for "across" ved at skrive "?across" i console og læser om den under "help". Ser at der står "across(.cols, .fns, ..., .names = NULL, .unpack = FALSE)"
+
+```{r}
+hr_data <- read_all("HR.csv.gz") %>%
+  get_participant_id()
+
+hr_data
+```
+
+Skriver "list" fordi det er flere funktioner i across-funktionen, og vi kan dermed tilføje flere funktioner i across-funktionen.
+Skriver "mean = mean" for at navngive "mean" til "mean" (navn er det først, funktion er det andet).
+```{r}
+hr_data %>%
+  summarise(across(where(is.numeric), list(
+    mean = mean,
+    median = median,
+    sd = sd,
+    min = min,
+    max = max
+  )))
+```
+
+Hvis man ville udelukke NA-værdier:
+For instance, if we needed to remove NA values from the calculations, we would do:
+  list(mean = \(x) mean(x, na.rm = TRUE))
+$mean
+function (x) 
+mean(x, na.rm = TRUE)
+
+
+## Working with dates
+
+Laver ny kolonne med navnet "datetime" i datasættet. Vi fjerner sekund-information fra data og vil kun have minut. 
+```{r}
+hr_data %>%
+  mutate(
+    datetime = round_date(collection_datetime, unit = "minute"),
+    .before = "collection_datetime"
+  )
+
+# usethis::use_package("lubridate")
+```
+
+## Summarising by groups
+
+Ændrer så sekunder er rundet op til minutter
+```{r}
+hr_data %>%
+  mutate(
+    collection_datetime = round_date(
+      collection_datetime,
+      unit = "minute"
+    )
+  ) %>%
+  summarise(
+    across(
+      where(is.numeric),
+      list(mean = mean, sd = sd, median = median)
+    ),
+    .by = c(id, collection_datetime)
+  )
 ```
