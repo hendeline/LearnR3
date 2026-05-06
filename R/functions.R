@@ -57,3 +57,30 @@ get_participant_id <- function(data){
     dplyr::select(-file_path_id)
   return(data_with_id)
 }
+
+
+#Funktion fra øvelse 20.6:
+#' Title: Summarise values in a data frame by a rounded datetime
+#'
+#' @param data A data frame with at least a `collection_datetime` column and
+#'  some numeric columns to summarise.
+#'
+#' @returns A summarised data frame.
+#'
+summarise_by_datetime <- function(data) {
+  summarised_data <- data |>
+    dplyr::mutate(
+      collection_datetime = lubridate::round_date(
+        collection_datetime,
+        unit = "minute"
+      )
+    ) %>%
+    dplyr::summarise(
+      dplyr::across(
+        tidyselect::where(is.numeric),
+        base::list(mean = mean, sd = sd, median = median)
+      ),
+      .by = c(id, collection_datetime)
+    )
+  base::return(summarised_data)
+}
