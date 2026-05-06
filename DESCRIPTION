@@ -7,7 +7,9 @@ URL: https://github.com/hendeline/LearnR3
 BugReports: https://github.com/hendeline/LearnR3/issues
 Imports: 
     base,
+    fs,
     here,
+    purrr,
     readr,
     snakecase
 Depends: 

@@ -213,11 +213,45 @@ hr_data
 # Vi har nu hentet alt heart-rate-data på alle deltagere og kombineret dem i et datasæt. Lærer at omdøbe id senere.
 ```
 
+##Exercise 18.5 Convert map to function and use on sleep
 
+Øvelsen skal ende ud i at jeg kan køre disse funktinoer:
+hr_data <- read_all("HR.csv.gz")
+ibi_data <- read_all("IBI.csv.gz")
+bvp_data <- read_all("BVP.csv.gz")
 
+For at kunne gøre det, skal jeg lave en ny funktion. 
 
+```{r}
+#| eval: false
+#| include: false
+# Tilføjer fs og purrr til DESCRIPTION:
+# Her kørt nedenstående og efterfølgende inaktiveret dem med #.
+# usethis::use_package("fs")
+# usethis::use_package("purrr")
 
+#' Title: Read all `.csv.gz` files in the `stress/` folder into one data frame.
+#'
+#' @param filename The name of files in the sub-folders that we want to read in.
+#'
+#' @returns A single data frame/tibble.
 
+read_all <- function(filename) {
+  files <- here::here("data-raw/nurses-stress/") %>%
+    fs::dir_ls(regexp = "HR.csv.gz", recurse = TRUE)
 
+  data <- files %>%
+    purrr::map(read) %>%
+    purrr::list_rbind(names_to = "file_path_id")
+  return(data)
+}
 
+# Har kopieret koden herover ind i functions og derefter tilføjet "eval:false", så den ikke kører funktionen herinde længere. Skulle egentligt slettes.
+```
 
+Kan nu køre de funktioner, jeg ønsker, så jeg nemt kan hente forskelligt data (HR, IBI og BVP):
+```{r}
+hr_data <- read_all("HR.csv.gz")
+ibi_data <- read_all("IBI.csv.gz")
+bvp_data <- read_all("BVP.csv.gz")
+```
