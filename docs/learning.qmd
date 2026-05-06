@@ -17,6 +17,7 @@ Snakecase-linjen herunder kan i princippet slettes, da den er skrevet ind i min 
 library(tidyverse)
 library(here)
 library(snakecase)
+library(fs)
 source(here("R/functions.R"))
 ```
 
@@ -178,6 +179,39 @@ Kommer fra snakecase-pakke. Denne tilføjes:
 
 usethis::use_package("snakecase")
 
+
+### Day 2
+
+## Doing many things at once with functionals - using map
+
+Mapping (fra purrr) gør, at man kan tage mange ting og apply en function på alle tingene.
+
+Bruger pakken "fs". Måde at finde filer på computer. 
+dir_ls: Lister alle filer på en given placering på computeren. Herunder finder den alle filer i mappen "HR.csv.gz".
+
+```{r}
+hr_files <- here("data-raw/nurses-stress/") %>%
+  dir_ls(regexp = "HR.csv.gz", recurse = TRUE)
+
+hr_files
+
+# Disse filer skal nu ind i map-funktionen.
+
+hr_data <- hr_files %>%
+  map(read)
+
+# For at se filerne kan man skrive "hr_data" eller for bare at få vist den første kan man skrive "hr_data[[1]]" - man kan angive det tal, som man gerne vil se datasættet for. Hvis jeg skrev 100 i stedet for 1, ville jeg se datasæt nr 100.
+hr_data[[1]]
+
+# Vi vil nu kombinere datasættene i stedet for at fremkalde dem et ad gangen. "Row-bind" fordi alle rows er ens.
+hr_data <- hr_files %>%
+  map(read) %>%
+  list_rbind(names_to = "file_path_id")
+hr_data
+# Ser nu at jeg kun har to rows, men har mange flere data i de to rækker. Ved at skrive "names_to = file_path_id" indsætter man ny kolonne, så man får ID på de forskellige datasæt ned i rækken.
+
+# Vi har nu hentet alt heart-rate-data på alle deltagere og kombineret dem i et datasæt. Lærer at omdøbe id senere.
+```
 
 
 
