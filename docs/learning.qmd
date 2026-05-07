@@ -216,10 +216,36 @@ hr_data
 
 ##Exercise 18.5 Convert map to function and use on sleep
 
-Øvelsen skal ende ud i at jeg kan køre disse funktinoer:
-hr_data <- read_all("HR.csv.gz")
+#Øvelsen skal ende ud i at jeg kan køre disse funktinoer:
+
+
+```{r}
+hr_data <- read_all("HR.csv.gz") |>
+  get_participant_id() |>
+  summarise_by_datetime()
+
+ibi_data <- read_all("IBI.csv.gz") |>
+  get_participant_id() |>
+  summarise_by_datetime()
+
+temp_data <- read_all("TEMP.csv.gz") |>
+  get_participant_id() |>
+  summarise_by_datetime()
+
+bvp_data <- read_all("BVP.csv.gz") |>
+  get_participant_id() |>
+  summarise_by_datetime()
+
+eda_data <- read_all("EDA.csv.gz") |>
+  get_participant_id() |>
+  summarise_by_datetime()
+```
+
+
 ibi_data <- read_all("IBI.csv.gz")
 bvp_data <- read_all("BVP.csv.gz")
+temp_data <- read_all("temp.csv.gz")
+eda_data <- read_all("eda.csv.gz")
 
 For at kunne gøre det, skal jeg lave en ny funktion. 
 
@@ -482,6 +508,7 @@ Vi vil gerne ordne datasættet survey, så det er klar til at blive flettet med 
 by = 60 angiver at den skal gøre det pr sekund
 "group_by(pick(-collection_datetime))" gør at den grupperer ud fra alle andre kolonner end collection_datetime
 ungroup bruges for good practise sidst i dataanalysen for at afgruppere datasættet til fremtidige analyser. 
+Når man bruger "pivot longer"-funktionen laver den automatisk to kolonner (med navnene names_to and values_to). I eksemplet herunder laver den "names_to" som vi sletter ved at skrive "NULL" og "values_to" som vi navngiver "collection_datetime".
 ```{r}
 survey_tidy %>%
   select(id, datetime_id, start_datetime, end_datetime) %>%
@@ -549,6 +576,14 @@ survey_to_long <- function(data) {
 }
 ```
 
+```{r}
+# Kopierer nedenstående fra cleaning.qmd:
+survey_tidy <- here::here("data-raw/nurses-stress/survey-results.csv.gz") |>
+  read() |>
+  tidy_survey_dates()
+survey_long <- survey_tidy |>
+  survey_to_long()
+```
 
 
 ```{r}
@@ -559,4 +594,65 @@ survey_data |>
 survey_data |>
   tidy_survey_dates() |>
   survey_to_long()
+```
+
+## 22 Joining data together
+
+Left-joint og "rbind" er det mest normale at bruge. 
+
+Vil flette "survey_long" og "survey_tidy".
+
+
+```{r}
+survey_long
+# Dette datasæt har 3000 datarækker
+survey_tidy
+# Disse sæt har 100 datarækker
+
+
+# Prøver leftjoint (joiner det første "argument"/datasæt, som man skriver i funktionen med det andet "argument"/datasæt i funktionen - beholder ALT i det venstre datasæt og KUN det som overlapper i det højre og resten fjernes). Best practise to use left-join.
+survey_long %>%
+  left_join(survey_tidy)
+
+survey_tidy %>%
+  count(id, datetime_id) %>%
+  filter(n > 1)
+# Outcome af count-kode viser, at for kombinationen af en type id+ datetime_id er der "n" antal.
+# Hvis vi vil finde dubliketter kan vi bruge filter, som vi gør i næste linje - viser at der kun er to dubletter.
+
+# Prøver right-join (gør omvendt af left-join - læs note herover)
+survey_long %>%
+  right_join(survey_tidy)
+
+# Prøver full-join (joiner alt data både i højre og venstre datasæt + overlap - hvis datasæt har helt ens kolonner, vil antallet af kolonner ikke ændres ved at joine dem sammen)
+survey_long %>%
+  full_join(survey_tidy)
+```
+
+```{r}
+nurses_stress <- survey_long %>%
+  full_join(survey_tidy) %>%
+  full_join(hr_data)
+
+# Har nu joined begge datasæt.
+# nedenstående arrangerer rækkerne efter indhold i kolonner (søg på "?arrange" for at se, hvad den gør). "view" åbner data i en ny fane
+nurses_stress %>%
+  arrange(id, collection_datetime) %>%
+  view()
+```
+
+
+
+## Exercise 22.5 Joining datasets
+
+```{r}
+# Øvelse 22.5:
+nurses_stress <- survey_long |>
+  full_join(survey_tidy) |>
+  full_join(hr_data) |>
+  full_join(ibi_data) |>
+  full_join(temp_data) |>
+  full_join(bvp_data) |>
+  full_join(eda_data)
+
 ```

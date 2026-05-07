@@ -12,4 +12,15 @@ format: html
 
 ```{r}
 # Code chunk
+
+survey_tidy <- here::here("data-raw/nurses-stress/survey-results.csv.gz") |>
+  read() |>
+  tidy_survey_dates()
+
+survey_long <- survey_tidy |>
+  survey_to_long()
 ```
+
+
+
+
