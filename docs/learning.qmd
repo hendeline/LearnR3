@@ -656,3 +656,12 @@ nurses_stress <- survey_long |>
   full_join(eda_data)
 
 ```
+
+## Øvelse 22.6
+```{r}
+write_csv(nurses_stress, here("data/nurses-stress.csv"))
+```
+Puttede dette i console:
+usethis::use_git_ignore("data/nurses-stress.csv")
+
+
