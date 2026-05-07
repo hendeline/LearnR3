@@ -448,3 +448,115 @@ summarise_by_datetime <- function(data) {
 
 # usethis::use_package("tidyselect")
 ```
+
+## 21 Pivot longer
+
+
+```{r}
+survey_data <- here("data-raw/nurses-stress/survey-results.csv.gz") %>%
+  read()
+survey_data
+```
+
+Vil gerne kombinere tidskolonnerne i én kolonne (start_time, end_time, duration og date).
+mdy(date) angiver, at det er "måned, dag, år" - det skla være i dette specifikke format, når man bruger "as_date"-funktionen.
+Tilføjer "start_datetime"-kolonne. String med både date and time. Laver samme for end-time.
+.before angiver, at de nye kolonner som blev lavet, skal stå først.
+Fjerner kolonner med "start_time" og "end_time" med select-funktion. Skriver "-c(xxx)" for at den ved, at det er minus foran alle de angivne kolonner i parentesen. 
+
+```{r}
+survey_tidy <- survey_data %>%
+  mutate(
+    date = mdy(date),
+    start_datetime = as_datetime(paste(date, start_time)),
+    end_datetime = as_datetime(paste(date, end_time)),
+    datetime_id = start_datetime,
+    .before = start_time
+  ) %>%
+  select(-c(date, start_time, end_time, duration))
+survey_tidy
+```
+
+
+Vi vil gerne ordne datasættet survey, så det er klar til at blive flettet med HR-data.
+by = 60 angiver at den skal gøre det pr sekund
+"group_by(pick(-collection_datetime))" gør at den grupperer ud fra alle andre kolonner end collection_datetime
+ungroup bruges for good practise sidst i dataanalysen for at afgruppere datasættet til fremtidige analyser. 
+```{r}
+survey_tidy %>%
+  select(id, datetime_id, start_datetime, end_datetime) %>%
+  pivot_longer(c(start_datetime, end_datetime), names_to = NULL, values_to = "collection_datetime") %>%
+  group_by(pick(-collection_datetime)) %>%
+  complete(collection_datetime = seq(min(collection_datetime), max(collection_datetime), by = 60)) %>%
+  ungroup()
+```
+
+## Øvelse 21.4
+
+Skal ende ud i at kunne køre følgende to funktioner:
+survey_tidy <- tidy_survey_dates(survey_data)
+survey_long <- survey_to_long(survey_tidy)
+
+```{r}
+#| eval: false
+#| include: false
+# usethis::use_package("tidyr")
+
+#' Tidy up the dates in the survey results
+#'
+#' @param data A data frame of the survey results data.
+#'
+#' @return A data frame.
+tidy_survey_dates <- function(data) {
+  tidied <- data |>
+    dplyr::mutate(
+      date = lubridate::mdy(date),
+      start_datetime = lubridate::as_datetime(paste(date, start_time)),
+      end_datetime = lubridate::as_datetime(paste(date, end_time)),
+      datetime_id = start_datetime,
+      .before = start_time
+    ) |>
+    dplyr::select(-c(date, start_time, end_time, duration))
+  return(tidied)
+}
+
+
+# Other function
+
+#' Pivot survey data to longer format, with only IDs and datetimes
+#'
+#' @param data A data frame of the data from `tidy_survey_dates()`.
+#'
+#' @returns A data frame.
+survey_to_long <- function(data) {
+  longer <- data |>
+    dplyr::select(id, datetime_id, start_datetime, end_datetime) |>
+    tidyr::pivot_longer(
+      c(start_datetime, end_datetime),
+      names_to = NULL,
+      values_to = "collection_datetime"
+    ) |>
+    dplyr::group_by(dplyr::pick(-collection_datetime)) |>
+    tidyr::complete(
+      collection_datetime = seq(
+        min(collection_datetime),
+        max(collection_datetime),
+        by = 60
+      )
+    ) |>
+    dplyr::ungroup()
+  return(longer)
+}
+```
+
+
+
+```{r}
+survey_data |>
+  tidy_survey_dates()
+
+
+survey_data |>
+  tidy_survey_dates() |>
+  survey_to_long()
+```
